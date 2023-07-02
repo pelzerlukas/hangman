@@ -21,7 +21,7 @@ fn main() {
 }
 
 fn get_word() -> GuessWord {
-    return new(String::from("Henker test"));
+    return new(String::from("Bleistift"));
 }
 
 fn new(value: String) -> GuessWord {
@@ -54,8 +54,8 @@ impl GuessWord {
                     .replace_range(index..index + 1, String::from(char).as_str());
             }
         }
-
-        if !self.value.to_lowercase().contains(input.to_ascii_lowercase()) {
+        let isInputInSecretWord = !self.value.to_lowercase().contains(input.to_ascii_lowercase())
+        if  isInputInSecretWord {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
                 println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries);
