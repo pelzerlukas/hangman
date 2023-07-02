@@ -12,6 +12,7 @@ fn main() {
     print!("Welcome to hangman! Good luck guessing the word! \n");
     let mut word_to_guess = get_word();
     loop {
+        println!("Yet revealed: {}", word_to_guess.revealed);
         print!("Character guess: ");
         let char = read_input();
         match char {
@@ -22,9 +23,17 @@ fn main() {
 }
 
 fn get_word() -> GuessWord {
+    return new(String::from("Henker"));
+}
+
+fn new(value: String) -> GuessWord {
+    let mut revealed = String::from("");
+    for char in value.chars() {
+        revealed += "_"
+    }
     return GuessWord {
-        value: String::from("Henker"),
-        revealed: String::from(""),
+        value: value,
+        revealed: revealed,
         tries: 0,
     };
 }
@@ -37,18 +46,27 @@ fn read_input() -> Option<char> {
 
 impl GuessWord {
     fn guess_letter(&mut self, input: char) {
-        //for char in self.value.chars() {}
-        if self.value.contains(input) {
-            //todo: ignorecase
-            println!("Correct!");
-        } else {
+        if !self.value.contains(input) {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
-                println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries)
+                println!("Too bad! This was {} / {MAX_TRIES}", &self.tries);
+                return;
             } else {
-                println!("GAME OVER! The word was: {}", &self.value);
+                println!("GAME OVER! The word was attempt: {}", &self.value);
                 process::exit(0);
             }
+        }
+
+        for (index, char) in self.value.chars().enumerate() {
+            if char == input {
+                self.revealed
+                    .replace_range(index..index + 1, String::from(char).as_str());
+            }
+        }
+
+        if !self.revealed.contains('_') {
+            println!("You won!!");
+            process::exit(0);
         }
     }
 }
