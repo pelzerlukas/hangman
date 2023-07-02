@@ -4,6 +4,7 @@ extern crate text_io;
 use std::process;
 
 const MAX_TRIES: u8 = 6;
+const HIDDEN_LETTER_SYMBOL: char = '_';
 
 fn main() {
     print!("Welcome to hangman! Good luck guessing the word! \n");
@@ -29,7 +30,7 @@ fn new(value: String) -> GuessWord {
         if char == ' ' {
             revealed += " ";
         } else {
-            revealed += "_";
+            revealed += HIDDEN_LETTER_SYMBOL.to_string().as_str();
         }
     }
     return GuessWord {
@@ -54,18 +55,19 @@ impl GuessWord {
             }
         }
 
-        if !self.value.contains(input) {
+        if !self.value.to_lowercase().contains(input.to_ascii_lowercase()) {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
-                println!("Too bad! This was {} / {MAX_TRIES}", &self.tries);
+                println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries);
                 return;
             } else {
-                println!("GAME OVER! The word was attempt: {}", &self.value);
+                println!("GAME OVER! The word was: {}", &self.value);
                 process::exit(0);
             }
         }
 
-        if !self.revealed.contains('_') {
+        let won = !self.revealed.contains(HIDDEN_LETTER_SYMBOL);
+        if won {
             println!("You won!!");
             process::exit(0);
         }
