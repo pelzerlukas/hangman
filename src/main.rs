@@ -1,12 +1,9 @@
-#![allow(dead_code)]
-#![allow(unused)]
-
 #[macro_use]
 extern crate text_io;
 
 use std::process;
 
-const MAX_TRIES: u8 = 3;
+const MAX_TRIES: u8 = 6;
 
 fn main() {
     print!("Welcome to hangman! Good luck guessing the word! \n");
@@ -17,19 +14,23 @@ fn main() {
         let char = read_input();
         match char {
             Some(result) => word_to_guess.guess_letter(result),
-            None => break,
+            None => continue,
         }
     }
 }
 
 fn get_word() -> GuessWord {
-    return new(String::from("Henker"));
+    return new(String::from("Henker test"));
 }
 
 fn new(value: String) -> GuessWord {
     let mut revealed = String::from("");
     for char in value.chars() {
-        revealed += "_"
+        if char == ' ' {
+            revealed += " ";
+        } else {
+            revealed += "_";
+        }
     }
     return GuessWord {
         value: value,
@@ -46,6 +47,13 @@ fn read_input() -> Option<char> {
 
 impl GuessWord {
     fn guess_letter(&mut self, input: char) {
+        for (index, char) in self.value.chars().enumerate() {
+            if char.to_lowercase().to_string() == input.to_lowercase().to_string() {
+                self.revealed
+                    .replace_range(index..index + 1, String::from(char).as_str());
+            }
+        }
+
         if !self.value.contains(input) {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
@@ -54,13 +62,6 @@ impl GuessWord {
             } else {
                 println!("GAME OVER! The word was attempt: {}", &self.value);
                 process::exit(0);
-            }
-        }
-
-        for (index, char) in self.value.chars().enumerate() {
-            if char == input {
-                self.revealed
-                    .replace_range(index..index + 1, String::from(char).as_str());
             }
         }
 
