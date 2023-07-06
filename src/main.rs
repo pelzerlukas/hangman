@@ -47,15 +47,25 @@ fn read_input() -> Option<char> {
 }
 
 impl GuessWord {
+    fn reveal_letter(&mut self, index: usize) {
+        let char = &self.value.chars().nth(index).unwrap().to_string();
+        self.revealed
+            .replace_range(index..index + 1, String::from(char).as_str());
+    }
+
     fn guess_letter(&mut self, input: char) {
         let mut found = false;
-        for (index, char) in self.value.chars().enumerate() {
-            if char.to_lowercase().to_string() == input.to_lowercase().to_string() {
-                self.revealed
-                    .replace_range(index..index + 1, String::from(char).as_str());
+        for index in 0..self.value.len() {
+            let char_at_index = self.value.chars().nth(index).unwrap();
+            let input_matches_char_at_index =
+                &char_at_index.to_ascii_lowercase() == &input.to_ascii_lowercase();
+
+            if input_matches_char_at_index {
+                self.reveal_letter(index);
                 found = true;
             }
         }
+
         if !found {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
