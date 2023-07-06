@@ -48,14 +48,15 @@ fn read_input() -> Option<char> {
 
 impl GuessWord {
     fn guess_letter(&mut self, input: char) {
+        let mut found = false;
         for (index, char) in self.value.chars().enumerate() {
             if char.to_lowercase().to_string() == input.to_lowercase().to_string() {
                 self.revealed
                     .replace_range(index..index + 1, String::from(char).as_str());
+                found = true;
             }
         }
-        let isInputInSecretWord = !self.value.to_lowercase().contains(input.to_ascii_lowercase())
-        if  isInputInSecretWord {
+        if !found {
             self.tries += 1;
             if &self.tries < &MAX_TRIES {
                 println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries);
