@@ -37,6 +37,7 @@ fn new(value: String) -> GuessWord {
         value: value,
         revealed: revealed,
         tries: 0,
+        guesses: Vec::new(),
     };
 }
 
@@ -54,6 +55,14 @@ impl GuessWord {
     }
 
     fn guess_letter(&mut self, input: char) {
+        let normalized_input = input.clone().to_ascii_lowercase();
+        let already_guessed = *&self.guesses.contains(&normalized_input);
+        if already_guessed {
+            println!("You already guessed that!");
+            return;
+        } else {
+            let _ = &self.guesses.push(normalized_input);
+        }
         let mut found = false;
         for index in 0..self.value.len() {
             let char_at_index = self.value.chars().nth(index).unwrap();
@@ -89,4 +98,5 @@ struct GuessWord {
     value: String,
     revealed: String,
     tries: u8,
+    guesses: Vec<char>,
 }
