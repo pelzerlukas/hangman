@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate text_io;
 
+use rand::Rng;
+use std::fs;
 use std::process;
 
 const MAX_TRIES: u8 = 6;
@@ -21,7 +23,28 @@ fn main() {
 }
 
 fn get_word() -> GuessWord {
-    return new(String::from("Bleistift"));
+    let file = fs::read_to_string("./words.txt");
+    match file {
+        Ok(words) => {
+            let word = get_random_word_of_file(words);
+            return new(String::from(word));
+        }
+        Err(_) => {
+            panic!()
+        }
+    }
+}
+
+fn get_random_word_of_file(words: String) -> String {
+    let word_list: Vec<&str> = words.split("\n").collect();
+    let word_count = word_list.len();
+    let random_index = rand::thread_rng().gen_range(0..word_count);
+    let random_word = word_list.get(random_index);
+    let word = match random_word {
+        Some(word) => word,
+        None => panic!(),
+    };
+    return String::from(word.clone());
 }
 
 fn new(value: String) -> GuessWord {
