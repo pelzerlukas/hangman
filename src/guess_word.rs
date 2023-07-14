@@ -60,7 +60,7 @@ impl GuessWord {
 
         let won = !self.revealed.contains(HIDDEN_LETTER_SYMBOL);
         if won {
-            println!("You won!!");
+            println!("You won!! The word was: {}",self.value);
             process::exit(0);
         }
     }
