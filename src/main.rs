@@ -7,7 +7,7 @@ use std::fs;
 mod guess_word;
 
 fn main() {
-    print!("Welcome to hangman! Good luck guessing t    he word! \n");
+    print!("Welcome to hangman! Good luck guessing the word! \n");
     let mut word_to_guess = get_word();
     loop {
         println!("Yet revealed: {}", word_to_guess.revealed);
