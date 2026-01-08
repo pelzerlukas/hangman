@@ -27,7 +27,7 @@ impl GuessWord {
     }
 
     pub fn guess_letter(&mut self, input: char) {
-        let normalized_input = input.clone().to_ascii_lowercase();
+        let normalized_input = String::from(input).to_lowercase().chars().nth(0).unwrap();
         let already_guessed = *&self.guesses.contains(&normalized_input);
         if already_guessed {
             println!("You already guessed that!");
@@ -38,7 +38,7 @@ impl GuessWord {
         let mut found = false;
         for (index,char) in self.value.clone().chars().enumerate() {
             let input_matches_char_at_index =
-                char.to_ascii_lowercase() == input.to_ascii_lowercase();
+                String::from(char).to_lowercase() == String::from(input).to_lowercase();
 
             if input_matches_char_at_index {
                 self.reveal_letter(index,char);
