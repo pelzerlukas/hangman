@@ -8,9 +8,9 @@ impl GuessWord {
         let mut revealed = String::from("");
         for char in value.chars() {
             if char == ' ' {
-                revealed += " ";
+                revealed.push(' ');
             } else {
-                revealed += HIDDEN_LETTER_SYMBOL.to_string().as_str();
+                revealed.push(HIDDEN_LETTER_SYMBOL);
             }
         }
         return GuessWord {
@@ -27,18 +27,18 @@ impl GuessWord {
     }
 
     pub fn guess_letter(&mut self, input: char) {
-        let normalized_input = String::from(input).to_lowercase().chars().nth(0).unwrap();
-        let already_guessed = *&self.guesses.contains(&normalized_input);
+        let normalized_input = normalize_input(input);
+        let already_guessed = self.guesses.contains(&normalized_input);
         if already_guessed {
             println!("You already guessed that!");
             return;
         } else {
-            let _ = &self.guesses.push(normalized_input);
+            let _ = &self.guesses.push(normalized_input.clone());
         }
         let mut found = false;
         for (index,char) in self.value.clone().chars().enumerate() {
             let input_matches_char_at_index =
-                String::from(char).to_lowercase() == String::from(input).to_lowercase();
+                normalize_input(char) == normalized_input;
 
             if input_matches_char_at_index {
                 self.reveal_letter(index,char);
@@ -48,7 +48,7 @@ impl GuessWord {
 
         if !found {
             self.tries += 1;
-            if &self.tries < &MAX_TRIES {
+            if self.tries < MAX_TRIES {
                 println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries);
                 return;
             } else {
@@ -69,5 +69,9 @@ pub struct GuessWord {
     value: String,
     pub revealed: String,
     tries: u8,
-    guesses: Vec<char>,
+    guesses: Vec<String>,
 }
+
+fn normalize_input(to_normalize: char) -> String {
+        String::from(to_normalize).to_lowercase()
+    }

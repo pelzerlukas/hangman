@@ -25,7 +25,7 @@ fn get_word() -> GuessWord {
     match file {
         Ok(words) => {
             let word = get_random_word_of_file(words);
-            return GuessWord::new(String::from(word));
+            return GuessWord::new(word);
         }
         Err(_) => {
             panic!()
@@ -42,7 +42,7 @@ fn get_random_word_of_file(words: String) -> String {
         Some(word) => word,
         None => panic!(),
     };
-    return String::from(word.clone());
+    return String::from(*word);
 }
 
 fn read_input() -> Option<char> {
