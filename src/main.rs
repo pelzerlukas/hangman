@@ -34,7 +34,7 @@ fn get_word() -> GuessWord {
 }
 
 fn get_random_word_of_file(words: String) -> String {
-    let word_list: Vec<&str> = words.split("\n").map(|line|line.trim()).collect();
+    let word_list: Vec<&str> = words.split("\n").map(|line| line.trim()).collect();
     let word_count = word_list.len();
     let random_index = rand::thread_rng().gen_range(0..word_count);
     let random_word = word_list.get(random_index);
