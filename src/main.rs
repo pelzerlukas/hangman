@@ -7,7 +7,7 @@ use std::fs;
 mod guess_word;
 
 fn main() {
-    print!("Welcome to hangman! Good luck guessing the word! \n");
+    println!("Welcome to hangman! Good luck guessing the word!");
     let mut word_to_guess = get_word();
     loop {
         println!("Yet revealed: {}", word_to_guess.revealed);
@@ -25,7 +25,7 @@ fn get_word() -> GuessWord {
     match file {
         Ok(words) => {
             let word = get_random_word_of_file(words);
-            return GuessWord::new(word);
+            GuessWord::new(word)
         }
         Err(_) => {
             panic!()
@@ -42,11 +42,11 @@ fn get_random_word_of_file(words: String) -> String {
         Some(word) => word,
         None => panic!(),
     };
-    return String::from(*word);
+    String::from(*word)
 }
 
 fn read_input() -> Option<char> {
     let guess: String = read!("{}\n");
     let sanitized = guess.trim();
-    return sanitized.chars().next();
+    sanitized.chars().next()
 }

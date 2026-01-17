@@ -13,12 +13,12 @@ impl GuessWord {
                 revealed.push(HIDDEN_LETTER_SYMBOL);
             }
         }
-        return GuessWord {
-            value: value,
-            revealed: revealed,
+        GuessWord {
+            value,
+            revealed,
             tries: 0,
             guesses: Vec::new(),
-        };
+        }
     }
     fn reveal_letter(&mut self, char_index: usize, char: char) {
         let revealed = &mut self.revealed;
