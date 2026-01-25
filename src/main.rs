@@ -3,7 +3,7 @@ extern crate text_io;
 
 use crate::guess_word::GuessWord;
 use rand::Rng;
-use std::fs;
+use std::{fs, io::stdout};
 mod guess_word;
 
 fn main() {
@@ -21,10 +21,15 @@ fn main() {
 }
 
 fn get_word() -> GuessWord {
+    let body = reqwest::blocking::get("https://random-word-api.vercel.app/api?words=1")
+        .unwrap()
+        .text()
+        .unwrap();
+    println!("random word api: {}", body);
     let file = fs::read_to_string("./words.txt");
     match file {
-        Ok(words) => {
-            let word = get_random_word_of_file(words);
+        Ok(backup_words) => {
+            let word = get_random_word_of_file(backup_words);
             GuessWord::new(word)
         }
         Err(_) => {
