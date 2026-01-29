@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate text_io;
-
 use crate::guess_word::GuessWord;
+
 use std::fs;
 mod guess_word;
 
@@ -24,12 +24,9 @@ fn main() {
 }
 
 fn get_word_from_api() -> Result<GuessWord, Box<dyn std::error::Error>> {
-    let word: Vec<String> =
+    let mut words: Vec<String> =
         reqwest::blocking::get("https://random-word-api.vercel.app/api?words=1")?.json()?;
-    let word = word
-        .into_iter()
-        .next()
-        .ok_or("Error fetching word from api.")?;
+    let word = words.pop().ok_or("Error fetching word from api.")?;
     Ok(GuessWord::new(word))
 }
 
