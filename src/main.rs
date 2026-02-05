@@ -3,6 +3,7 @@ extern crate text_io;
 use crate::guess_word::GuessWord;
 
 use std::fs;
+mod ascii_art;
 mod guess_word;
 
 fn main() {

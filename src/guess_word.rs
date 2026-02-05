@@ -1,6 +1,8 @@
 use std::process;
 
-const MAX_TRIES: u8 = 6;
+use crate::ascii_art::ASCII_ART;
+
+const MAX_TRIES: usize = 6;
 pub const HIDDEN_LETTER_SYMBOL: char = '_';
 
 impl GuessWord {
@@ -47,6 +49,7 @@ impl GuessWord {
                 found = true;
             }
         }
+        println!("{}", ASCII_ART[self.tries]);
 
         if !found {
             self.tries += 1;
@@ -70,7 +73,7 @@ impl GuessWord {
 pub struct GuessWord {
     value: String,
     pub revealed: String,
-    tries: u8,
+    tries: usize,
     guesses: Vec<String>,
 }
 
