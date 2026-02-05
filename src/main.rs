@@ -5,6 +5,24 @@ use crate::guess_word::GuessWord;
 use std::fs;
 mod guess_word;
 
+struct Loop {
+    guess_word: GuessWord,
+}
+
+enum GameState {
+    RUNNING,
+    DONE,
+}
+
+impl Loop {
+    fn new(guess_word: GuessWord) -> Self {
+        Self { guess_word }
+    }
+    fn next(&mut self, input: char) -> GameState {
+        self.guess_word.guess_letter(input)
+    }
+}
+
 fn main() {
     println!("Welcome to hangman! Good luck guessing the word!");
     let word_from_api = get_word_from_api();
@@ -12,12 +30,16 @@ fn main() {
         Ok(word) => word,
         Err(_) => get_word_from_backup_file(),
     };
+    let mut game_loop = Loop::new(word);
+
     loop {
-        println!("Yet revealed: {}", word.revealed);
+        println!("Yet revealed: {}", game_loop.guess_word.revealed);
         print!("Character guess: ");
-        let char = read_input();
-        match char {
-            Some(result) => word.guess_letter(result),
+        match read_input() {
+            Some(char) => match game_loop.next(char) {
+                GameState::DONE => break,
+                _ => {}
+            },
             None => continue,
         }
     }
@@ -55,4 +77,15 @@ fn read_input() -> Option<char> {
     let guess: String = read!("{}\n");
     let sanitized = guess.trim();
     sanitized.chars().next()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        // let result = add(2, 2);
+        // assert_eq!(result, 4);
+    }
 }

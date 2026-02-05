@@ -19,7 +19,7 @@
           rustfmt
           rust-analyzer
           pkg-config
-        ];
+        ]; 
         RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
       };
 

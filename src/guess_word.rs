@@ -1,4 +1,5 @@
-use std::process;
+
+use crate::GameState;
 
 const MAX_TRIES: u8 = 6;
 pub const HIDDEN_LETTER_SYMBOL: char = '_';
@@ -29,12 +30,12 @@ impl GuessWord {
         );
     }
 
-    pub fn guess_letter(&mut self, input: char) {
+    pub fn guess_letter(&mut self, input: char) -> GameState {
         let normalized_input = normalize_input(input);
         let already_guessed = self.guesses.contains(&normalized_input);
         if already_guessed {
             println!("You already guessed that!");
-            return;
+            return GameState::RUNNING;
         } else {
             let _ = &self.guesses.push(normalized_input.clone());
         }
@@ -52,18 +53,20 @@ impl GuessWord {
             self.tries += 1;
             if self.tries < MAX_TRIES {
                 println!("Too bad! This was attempt {} / {MAX_TRIES}", &self.tries);
-                return;
+                return GameState::RUNNING;
             } else {
                 println!("GAME OVER! The word was: {}", &self.value);
-                process::exit(0);
+                return GameState::DONE;
             }
         }
 
         let won = !self.revealed.contains(HIDDEN_LETTER_SYMBOL);
         if won {
             println!("You won!! The word was: {}", self.value);
-            process::exit(0);
+            return GameState::DONE;
         }
+
+        return GameState::RUNNING;
     }
 }
 
