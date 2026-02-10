@@ -9,6 +9,7 @@ struct Loop {
     guess_word: GuessWord,
 }
 
+#[derive(PartialEq, Debug)]
 enum GameState {
     RUNNING,
     DONE,
@@ -26,7 +27,7 @@ impl Loop {
 fn main() {
     println!("Welcome to hangman! Good luck guessing the word!");
     let word_from_api = get_word_from_api();
-    let mut word = match word_from_api {
+    let word = match word_from_api {
         Ok(word) => word,
         Err(_) => get_word_from_backup_file(),
     };
@@ -84,8 +85,29 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        // let result = add(2, 2);
-        // assert_eq!(result, 4);
+    fn succeed_with_only_correct_guesses() {
+        let guess_word = GuessWord::new("Rust".to_string());
+        let mut game_loop = Loop::new(guess_word);
+
+        game_loop.next('r');
+        assert_eq!(game_loop.guess_word.revealed, "R___");
+
+        game_loop.next('t');
+        assert_eq!(game_loop.guess_word.revealed, "R__t");
+
+        game_loop.next('u');
+        assert_eq!(game_loop.guess_word.revealed, "Ru_t");
+
+        let end_state = game_loop.next('s');
+        assert_eq!(game_loop.guess_word.revealed, "Rust");
+    }
+
+    #[test]
+    fn gamestate_gets_returned_correctly() {
+        let guess_word = GuessWord::new("Rust".to_string());
+        let mut game_loop = Loop::new(guess_word);
+
+        let gamestate = game_loop.next('a');
+        assert_eq!(gamestate, GameState::RUNNING);
     }
 }
