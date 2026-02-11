@@ -7,9 +7,10 @@ mod guess_word;
 
 struct Loop {
     guess_word: GuessWord,
+    gamestate: GameState,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 enum GameState {
     RUNNING,
     DONE,
@@ -17,10 +18,19 @@ enum GameState {
 
 impl Loop {
     fn new(guess_word: GuessWord) -> Self {
-        Self { guess_word }
+        Self {
+            guess_word,
+            gamestate: GameState::RUNNING,
+        }
     }
     fn next(&mut self, input: char) -> GameState {
-        self.guess_word.guess_letter(input)
+        if self.gamestate == GameState::RUNNING {
+            let new_gamestate = self.guess_word.guess_letter(input);
+            self.gamestate = new_gamestate.clone();
+            new_gamestate
+        } else {
+            GameState::DONE
+        }
     }
 }
 
@@ -37,10 +47,12 @@ fn main() {
         println!("Yet revealed: {}", game_loop.guess_word.revealed);
         print!("Character guess: ");
         match read_input() {
-            Some(char) => match game_loop.next(char) {
-                GameState::DONE => break,
-                _ => {}
-            },
+            Some(char) => {
+                game_loop.next(char);
+                if game_loop.gamestate == GameState::DONE {
+                    break;
+                }
+            }
             None => continue,
         }
     }
@@ -104,7 +116,7 @@ mod tests {
 
     #[test]
     fn gamestate_gets_returned_correctly() {
-        let guess_word = GuessWord::new("Rust".to_string());
+        let guess_word = GuessWord::new("Rust".into());
         let wrong_letters = ['a', 'b', 'c', 'd', 'e', 'f'];
         let mut game_loop = Loop::new(guess_word);
 
@@ -115,6 +127,26 @@ mod tests {
 
         let last_wrong_letter = *wrong_letters.last().unwrap();
         let gamestate = game_loop.next(last_wrong_letter);
+        assert_eq!(gamestate, GameState::DONE);
+    }
+
+    #[test]
+    fn game_ends_after_being_in_done_once() {
+        let guess_word = GuessWord::new("Rust".into());
+        let wrong_letters = ['a', 'b', 'c', 'd', 'e', 'f'];
+        let mut game_loop = Loop::new(guess_word);
+
+        for wrong_letter_index in 0..wrong_letters.len() - 1 {
+            let gamestate = game_loop.next(wrong_letters[wrong_letter_index]);
+            assert_eq!(gamestate, GameState::RUNNING);
+        }
+
+        let last_wrong_letter = *wrong_letters.last().unwrap();
+        let gamestate = game_loop.next(last_wrong_letter);
+        assert_eq!(gamestate, GameState::DONE);
+
+        let correct_letter = 'r';
+        let gamestate = game_loop.next(correct_letter);
         assert_eq!(gamestate, GameState::DONE);
     }
 }
