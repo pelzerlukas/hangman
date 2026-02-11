@@ -98,16 +98,23 @@ mod tests {
         game_loop.next('u');
         assert_eq!(game_loop.guess_word.revealed, "Ru_t");
 
-        let end_state = game_loop.next('s');
+        game_loop.next('s');
         assert_eq!(game_loop.guess_word.revealed, "Rust");
     }
 
     #[test]
     fn gamestate_gets_returned_correctly() {
         let guess_word = GuessWord::new("Rust".to_string());
+        let wrong_letters = ['a', 'b', 'c', 'd', 'e', 'f'];
         let mut game_loop = Loop::new(guess_word);
 
-        let gamestate = game_loop.next('a');
-        assert_eq!(gamestate, GameState::RUNNING);
+        for wrong_letter_index in 0..wrong_letters.len() - 1 {
+            let gamestate = game_loop.next(wrong_letters[wrong_letter_index]);
+            assert_eq!(gamestate, GameState::RUNNING);
+        }
+
+        let last_wrong_letter = *wrong_letters.last().unwrap();
+        let gamestate = game_loop.next(last_wrong_letter);
+        assert_eq!(gamestate, GameState::DONE);
     }
 }
