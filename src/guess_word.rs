@@ -1,4 +1,3 @@
-
 use crate::GameState;
 
 const MAX_TRIES: u8 = 6;
@@ -6,14 +5,7 @@ pub const HIDDEN_LETTER_SYMBOL: char = '_';
 
 impl GuessWord {
     pub fn new(value: String) -> GuessWord {
-        let mut revealed = String::from("");
-        for char in value.chars() {
-            if char == ' ' {
-                revealed.push(' ');
-            } else {
-                revealed.push(HIDDEN_LETTER_SYMBOL);
-            }
-        }
+        let revealed = create_revealed_field(&value);
         GuessWord {
             value,
             revealed,
@@ -66,8 +58,20 @@ impl GuessWord {
             return GameState::DONE;
         }
 
-        return GameState::RUNNING;
+        GameState::RUNNING
     }
+}
+
+fn create_revealed_field(guess_word: &str) -> String {
+    let mut revealed = String::from("");
+    for char in guess_word.chars() {
+        if char == ' ' {
+            revealed.push(' ');
+        } else {
+            revealed.push(HIDDEN_LETTER_SYMBOL);
+        }
+    }
+    revealed
 }
 
 pub struct GuessWord {
@@ -79,4 +83,20 @@ pub struct GuessWord {
 
 fn normalize_input(to_normalize: char) -> String {
     String::from(to_normalize).to_lowercase()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn revealed_string_gets_created_successfully() {
+        let input = "WordWith17Letters";
+        let output = create_revealed_field(input);
+        let a = output
+            .chars()
+            .filter(|char| char == &HIDDEN_LETTER_SYMBOL)
+            .count();
+        assert_eq!(a, input.len());
+    }
 }

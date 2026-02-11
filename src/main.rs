@@ -10,7 +10,7 @@ struct Loop {
     gamestate: GameState,
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug)]
 enum GameState {
     RUNNING,
     DONE,
@@ -23,13 +23,11 @@ impl Loop {
             gamestate: GameState::RUNNING,
         }
     }
-    fn next(&mut self, input: char) -> GameState {
+
+    fn next(&mut self, input: char) {
         if self.gamestate == GameState::RUNNING {
             let new_gamestate = self.guess_word.guess_letter(input);
-            self.gamestate = new_gamestate.clone();
-            new_gamestate
-        } else {
-            GameState::DONE
+            self.gamestate = new_gamestate;
         }
     }
 }
@@ -121,13 +119,13 @@ mod tests {
         let mut game_loop = Loop::new(guess_word);
 
         for wrong_letter_index in 0..wrong_letters.len() - 1 {
-            let gamestate = game_loop.next(wrong_letters[wrong_letter_index]);
-            assert_eq!(gamestate, GameState::RUNNING);
+            game_loop.next(wrong_letters[wrong_letter_index]);
+            assert_eq!(game_loop.gamestate, GameState::RUNNING);
         }
 
         let last_wrong_letter = *wrong_letters.last().unwrap();
-        let gamestate = game_loop.next(last_wrong_letter);
-        assert_eq!(gamestate, GameState::DONE);
+        game_loop.next(last_wrong_letter);
+        assert_eq!(game_loop.gamestate, GameState::DONE);
     }
 
     #[test]
@@ -137,16 +135,16 @@ mod tests {
         let mut game_loop = Loop::new(guess_word);
 
         for wrong_letter_index in 0..wrong_letters.len() - 1 {
-            let gamestate = game_loop.next(wrong_letters[wrong_letter_index]);
-            assert_eq!(gamestate, GameState::RUNNING);
+            game_loop.next(wrong_letters[wrong_letter_index]);
+            assert_eq!(game_loop.gamestate, GameState::RUNNING);
         }
 
         let last_wrong_letter = *wrong_letters.last().unwrap();
-        let gamestate = game_loop.next(last_wrong_letter);
-        assert_eq!(gamestate, GameState::DONE);
+        game_loop.next(last_wrong_letter);
+        assert_eq!(game_loop.gamestate, GameState::DONE);
 
         let correct_letter = 'r';
-        let gamestate = game_loop.next(correct_letter);
-        assert_eq!(gamestate, GameState::DONE);
+        game_loop.next(correct_letter);
+        assert_eq!(game_loop.gamestate, GameState::DONE);
     }
 }
